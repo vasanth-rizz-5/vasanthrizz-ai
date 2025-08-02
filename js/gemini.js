@@ -1,0 +1,24 @@
+const API_KEY = 'AIzaSyCavF6FVL3LT2WTQ1bRAF88S3-4vmo7iqY';
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+
+// Disable Right Click
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// Disable specific key combinations
+document.addEventListener('keydown', function(e) {
+    // Ctrl+U
+    if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+        e.preventDefault();
+    }
+    // Ctrl+Shift+I or Ctrl+Shift+C
+    if (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'c')) {
+        e.preventDefault();
+    }
+    // F12
+    if (e.key === 'F12') {
+        e.preventDefault();
+    }
+});

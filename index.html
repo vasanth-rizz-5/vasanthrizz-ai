@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VasanthRizz AI Chat</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="./img/favicon.ico" type="image/png">
+
+    <!-- Open Graph (Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="VasanthRizz AI Chat">
+    <meta property="og:description" content="Chat smart with VasanthRizz AI – your own intelligent assistant.">
+    <meta property="og:image" content="./img/banner.png">
+    <meta property="og:url" content="https://vasanth-rizz-5.github.io/vasanthrizz-ai/">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VasanthRizz AI Chat">
+    <meta name="twitter:description" content="Chat smart with VasanthRizz AI – your own intelligent assistant.">
+    <meta name="twitter:image" content="./img/banner.png">
+    <meta name="twitter:url" content="https://vasanth-rizz-5.github.io/vasanthrizz-ai/">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+   
+    <script type="text/javascript" src="./js/chatgpt.js"></script>
+    <script type="text/javascript" src="./js/gemini.js"></script>
+    <script type="text/javascript" src="./js/deepseek.js"></script>
+    <script type="text/javascript" src="./js/copilot.js"></script>
+    <script type="text/javascript" src="./js/grok.js"></script>
+
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-color: #f8faff;
+            --panel-bg: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --primary-color: #5a67d8;
+            --primary-light: #7f9cf5;
+            --primary-dark: #4c51bf;
+            --secondary-color: #edf2f7;
+            --menu-bg: #1a202c;
+            --menu-text: #e2e8f0;
+            --input-bg: #ffffff;
+            --message-ai-bg: #ffffff;
+            --message-user-bg: #5a67d8;
+            --message-user-text: #ffffff;
+            --tool-btn-bg: #ffffff;
+            --welcome-text: #2d3748;
+            --welcome-subtext: #718096;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme */
+            --bg-color: #1a202c;
+            --panel-bg: #2d3748;
+            --text-color: #e2e8f0;
+            --border-color: #4a5568;
+            --primary-color: #7f9cf5;
+            --primary-light: #a3bffa;
+            --primary-dark: hsl(234, 62%, 60%);
+            --secondary-color: #4a5568;
+            --menu-bg: #1a202c;
+            --menu-text: #e2e8f0;
+            --input-bg: #4a5568;
+            --message-ai-bg: #2d3748;
+            --message-user-bg: #5a67d8;
+            --message-user-text: #ffffff;
+            --tool-btn-bg: #4a5568;
+            --welcome-text: #e2e8f0;
+            --welcome-subtext: #a0aec0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.25), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+        
+        /* Left Menu - Collapsed by default */
+        .left-menu {
+            width: 80px;
+            background-color: var(--menu-bg);
+            color: var(--menu-text);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            flex-shrink: 0;
+            z-index: 10;
+            border-right: 1px solid var(--border-color);
+            transition: width 0.3s ease;
+        }
+        
+        .left-menu.open {
+            width: 280px;
+        }
+        
+        /* Show only icons when collapsed */
+        .left-menu:not(.open) .menu-text,
+        .left-menu:not(.open) .logo-text,
+        .left-menu:not(.open) .auth-text,
+        .left-menu:not(.open) .menu-item-badge {
+            display: none;
+        }
+        
+        .left-menu:not(.open) .menu-icon {
+            margin-right: 0;
+        }
+        
+        .left-menu:not(.open) .menu-item {
+            justify-content: center;
+            padding: 12px;
+        }
+        
+        /* Logo and Toggle Positioning */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            height: 70px;
+        }
+        
+        .left-menu.open .logo-container {
+            justify-content: flex-start;
+            padding-left: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            font-size: 26px;
+            color: var(--primary-color);
+            margin-right: 12px;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+        
+        /* New Toggle Button Design */
+        .menu-toggle {
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--menu-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 11;
+            box-shadow: var(--shadow-md);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle:hover {
+            background: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .left-menu.open .menu-toggle {
+            right: -15px;
+        }
+        
+        .toggle-icon {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        
+        .left-menu.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .auth-buttons {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .auth-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: rgba(74, 74, 74, 0.3);
+            color: var(--menu-text);
+            border: 1px solid rgba(74, 74, 74, 0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            justify-content: center;
+        }
+        
+        .left-menu.open .auth-btn {
+            justify-content: flex-start;
+        }
+        
+        .auth-btn:hover {
+            background: rgba(74, 74, 74, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .auth-btn:active {
+            transform: translateY(0);
+        }
+        
+        .auth-icon {
+            margin-right: 12px;
+            font-size: 14px;
+        }
+        
+        .menu-items {
+            padding: 16px 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .left-menu.open .menu-item {
+            justify-content: flex-start;
+            padding: 12px 20px;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(74, 74, 74, 0.3);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(90, 103, 216, 0.2);
+            color: var(--primary-light);
+        }
+        
+        .menu-item.active .menu-icon {
+            color: var(--primary-light);
+        }
+        
+        .menu-icon {
+            margin-right: 12px;
+            font-size: 16px;
+            color: #a1a1a1;
+            transition: all 0.2s;
+        }
+        
+        .menu-text {
+            font-size: 14px;
+        }
+        
+        .menu-item-badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        /* Chat Area */
+        .chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Theme toggle on right side */
+        .theme-toggle-container {
+            position: absolute;
+            right: 153px;
+            top: 24px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+           
+        }
+        
+        .chat-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-action-btn {
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+        
+        .chat-action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+           
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            margin: 60px auto;
+            max-width: 640px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .welcome-message h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            color: var(--welcome-text);
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .welcome-message p {
+            font-size: 18px;
+            color: var(--welcome-subtext);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        
+        .welcome-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: nowrap;   /* ❗ Prevents wrapping */
+            align-items: center;  /* Vertically aligns buttons */
+            overflow-x: auto;     /* Enables horizontal scroll if too many buttons */
+        }
+        
+        
+        .welcome-btn {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .welcome-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .welcome-btn.secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        .message {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            padding: 16px 20px;
+            border-radius: 18px;
+            line-height: 1.6;
+            font-size: 15px;
+            max-width: 90%;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Loading indicator for AI response */
+        .loading-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .user-message .message-content {
+            background: var(--gradient-primary);
+            color: var(--message-user-text);
+            border-bottom-right-radius: 4px;
+        }
+        
+        .ai-message .message-content {
+            background-color: var(--message-ai-bg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--welcome-subtext);
+        }
+        
+        .message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .message-time {
+            margin-left: auto;
+            opacity: 0.7;
+        }
+        
+       .message-actions {
+    display: flex;
+    justify-content: flex-end; /* aligns children to the right */
+    gap: 8px;
+    margin-top: 8px;
+}
+
+        
+        .message-action {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.7;
+            transition: all 0.2s;
+        }
+        
+        .message-action:hover {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+        
+        .input-container {
+            width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+        
+        .input-box {
+            position: relative;
+            width: 100%;
+        }
+        
+        .chat-input {
+            width: 100%;
+            padding: 16px 60px 16px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            font-size: 15px;
+            outline: none;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
+        }
+        
+        .send-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .send-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .send-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        
+        .input-actions {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.7;
+            transition: all 0.2s;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .input-action-btn:hover {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+        
+        /* Tools */
+        .tools {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .tool-btn {
+            padding: 10px 16px;
+            background-color: var(--tool-btn-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            color: var(--text-color);
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .tool-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .tool-btn:active {
+            transform: translateY(0);
+        }
+        
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .input-container {
+                width: 90%;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .welcome-message h2 {
+                font-size: 28px;
+            }
+            
+            .welcome-message p {
+                font-size: 16px;
+            }
+            
+           
+            .left-menu {
+                width: 70px;
+            }
+            
+            .left-menu.open {
+                position: absolute;
+                height: 100%;
+                z-index: 20;
+                box-shadow: var(--shadow-lg);
+            }
+        }
+        
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            width: fit-content;
+            margin-bottom: 8px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+        
+        /* Markdown styling */
+        .message-content pre {
+            background-color: var(--secondary-color);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 8px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+        
+        .message-content code {
+            background-color: var(--secondary-color);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+        }
+        
+        .message-content p {
+            margin-bottom: 8px;
+        }
+        
+        .message-content ul, 
+        .message-content ol {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .message-content h1, 
+        .message-content h2, 
+        .message-content h3 {
+            margin: 12px 0 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Side Menu (Collapsed by default) -->
+   <div class="left-menu" id="leftMenu">
+        <div class="logo-container">
+            <div class="logo">
+                <i class="fas fa-robot logo-icon"></i>
+                <span class="logo-text">VasanthRizz AI</span>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-chevron-right toggle-icon"></i>
+            </button>
+        </div>
+        
+        <div class="auth-buttons" id="authButtons">
+
+            <button class="auth-btn" onclick="window.location.href='login.html'">
+                <i class="fas fa-user-plus auth-icon"></i>
+                <span class="auth-text">Register</span>
+              </button>
+
+
+            <button class="auth-btn">
+                <i class="fas fa-sign-in-alt auth-icon"></i>
+                <span class="auth-text">User name </span>
+            </button>
+
+
+           <script>
+            // Function to update auth buttons based on login status
+                    function updateAuthButtons() {
+                        const authButtonsContainer = document.getElementById('authButtons');
+                        const isLoggedIn = localStorage.getItem('vasanthLoggedIn') === 'true';
+                        const username = localStorage.getItem('vasanthUsername');
+                    
+                        if (isLoggedIn && username) {
+                        // User is logged in - show username
+                        authButtonsContainer.innerHTML = `
+                            <button class="auth-btn">
+                            <i class="fas fa-user me-5"></i>
+                            <span class="auth-text me-2">${username}</span>
+                            </button>
+                        `;
+                        } else {
+                        // User is not logged in - show register button
+                        authButtonsContainer.innerHTML = `
+                            <button class="auth-btn" onclick="window.location.href='login.html'">
+                            <i class="fas fa-user-plus auth-icon"></i>
+                            <span class="auth-text">Login / Register</span>
+                            </button>
+                        `;
+                        }
+                    }
+                    
+                    // Call this function when the page loads
+                    document.addEventListener('DOMContentLoaded', updateAuthButtons);
+                    
+                    // Also update when theme changes (in case it affects localStorage)
+                    themeToggle.addEventListener('click', updateAuthButtons);
+           </script>
+
+              
+        </div>
+        
+        <div class="menu-items">
+            <div class="menu-item active">
+                <i class="fas fa-comment-dots menu-icon"></i>
+                <span class="menu-text">New Chat</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-history menu-icon"></i>
+                <span class="menu-text">History</span>
+                <span class="menu-item-badge">3</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-star menu-icon"></i>
+                <span class="menu-text">Saved</span>
+            </div>
+            
+            <div class="menu-item">
+                <i class="fas fa-code menu-icon"></i>
+                <span class="menu-text">Code Assistant</span>
+            </div>
+            <div class="menu-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt menu-icon"></i>
+                <span class="menu-text">Logout</span>
+              </div>
+              
+              <script>
+                function logout() {
+                  localStorage.removeItem('vasanthLoggedIn');
+                  alert("Logged out successfully!");
+                  window.location.href = "login.html";
+                }
+              </script>
+              
+        </div>
+    </div>
+    
+    <!-- Chat Area -->
+    <div class="chat-container">
+        <div class="theme-toggle-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        
+        <div class="chat-header">
+            <h2 class="chat-title"></h2>
+            <div class="chat-actions">
+               
+                <button class="chat-action-btn">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Clear Chat</span>
+                </button>
+
+                
+            </div>
+        </div>
+        
+        <div class="chat-box" id="chatBox">
+            <div class="welcome-message">
+                <h2>Hi, I'm VasanthRizz AI</h2>
+                <!-- <p>Your intelligent assistant ready to help with any task. Ask me anything or try one of these examples:</p> -->
+              <div class="welcome-actions d-flex justify-content-center gap-3 flex-nowrap">
+                    <button class="welcome-btn secondary">
+                        <i class="fas fa-lightbulb"></i>
+                       
+                    </button>
+                    <button class="welcome-btn secondary">
+                        <i class="fas fa-code"></i>
+                       
+                    </button>
+                    <button class="welcome-btn secondary">
+                        <i class="fas fa-chart-line"></i>
+                        
+                    </button>
+                  
+                </div>
+            </div>
+            
+            <div class="message ai-message">
+                <div class="message-content">
+                    <div class="message-meta">
+                        <div class="message-avatar">AI</div>
+                        <span>VasanthRizz AI Assistant</span>
+                        
+                    </div>
+                    Hello! I'm VasanthRizz AI assistant. I can help with creative tasks, answer questions, generate ideas, and much more. How can I assist you today?
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-box">
+                <!-- <div class="input-actions">
+                    <button class="input-action-btn" title="Attach file">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-action-btn" title="Voice input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div> -->
+               
+                <input type="text" class="chat-input" id="userInput" placeholder="Ask VasanthRizz AI anything..." onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            
+             
+            <div class="tools">
+                <button class="tool-btn active">
+                    <i class="fas fa-brain"></i>
+                    
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-search"></i>
+                   
+                </button>
+               
+                <button class="tool-btn">
+                    <i class="fas fa-magic"></i>
+                   
+                </button>
+            </div>
+        </div>
+
+
+
+        <footer style="text-align: center; margin-top:10px; font-size: 14px; color: #555;">
+            © Copyright 2025 - 
+            <a href="https://vasanth-rizz-5.github.io/vasanthrizz/" target="_blank" style="color: hsl(234, 62%, 60%); text-decoration: none;">
+              VasanthRizz
+            </a>
+          </footer>
+          
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('i');
+    
+    // Check for saved theme preference or use preferred color scheme
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        
+        if (currentTheme === 'dark') {
+            document.documentElement.removeAttribute('data-theme');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+    
+    // Menu toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const leftMenu = document.getElementById('leftMenu');
+    const toggleIcon = menuToggle.querySelector('i');
+    
+    menuToggle.addEventListener('click', () => {
+        leftMenu.classList.toggle('open');
+        
+        if (leftMenu.classList.contains('open')) {
+            toggleIcon.classList.remove('fa-chevron-right');
+            toggleIcon.classList.add('fa-chevron-left');
+        } else {
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+        }
+    });
+    
+    // Tool buttons toggle
+    const toolButtons = document.querySelectorAll('.tool-btn');
+    toolButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            toolButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        });
+    });
+    
+    // Welcome buttons click handler
+    document.querySelectorAll('.welcome-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const text = this.querySelector('span').textContent;
+            document.getElementById('userInput').value = `Can you help me with ${text}?`;
+            sendMessage();
+        });
+    });
+    
+    // Message action buttons - fixed copy functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('message-action') || e.target.closest('.message-action')) {
+            const actionBtn = e.target.classList.contains('message-action') ? e.target : e.target.closest('.message-action');
+            const messageContent = actionBtn.closest('.message-content').querySelector('div:not(.message-meta)').innerText;
+            navigator.clipboard.writeText(messageContent).then(() => {
+                // Show a temporary tooltip or alert
+                const originalText = actionBtn.innerHTML;
+                actionBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    actionBtn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+    });
+    
+    // Gemini API configuration
+   
+    
+    // Send message function with Gemini API
+    function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const chatBox = document.getElementById('chatBox');
+        
+        if (userInput.value.trim() === '') return;
+        
+        // Remove welcome message if it exists
+        const welcomeMsg = document.querySelector('.welcome-message');
+        if (welcomeMsg) welcomeMsg.remove();
+        
+        // Add user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user-message';
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        userMessage.innerHTML = `
+            <div class="message-content">
+                <div class="message-meta">
+                    <div class="message-avatar">You</div>
+                    <span>${timeString}</span>
+                </div>
+                ${userInput.value}
+            </div>
+        `;
+        chatBox.appendChild(userMessage);
+        
+        // Clear input
+        const userMessageText = userInput.value;
+        userInput.value = '';
+        
+        // Add typing indicator for AI response
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'message ai-message';
+        typingIndicator.innerHTML = `
+            <div class="message-content">
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        `;
+        chatBox.appendChild(typingIndicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        
+        // Send message to Gemini API
+        fetch(`${API_URL}?key=${API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: userMessageText
+                    }]
+                }]
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove typing indicator
+            chatBox.removeChild(typingIndicator);
+            
+            // Extract the response text from Gemini API
+            let responseText = '';
+            try {
+                responseText = data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                responseText = "Sorry, I couldn't process that request. Please try again.";
+            }
+            
+            // Process the response to convert markdown to HTML
+            let processedResponse = responseText;
+            
+            // Convert **text** to bold
+            processedResponse = processedResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert *text* to italic
+            processedResponse = processedResponse.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Convert newlines to <br> tags
+            processedResponse = processedResponse.replace(/\n/g, '<br>');
+            
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'message ai-message';
+            
+            // Get current time for the response
+            const responseTime = new Date();
+            const responseTimeString = responseTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            aiMessage.innerHTML = `
+                <div class="message-content" style="padding: 16px 20px; line-height: 1.6;">
+                    <div class="message-meta">
+                        <div class="message-avatar">AI</div>
+                        <span>VasanthRizz AI Assistant</span>
+                        <span class="message-time">${responseTimeString}</span>
+                    </div>
+                    ${processedResponse}
+                    <!-- <div class="message-actions">
+                        <button class="message-action"><i class="fas fa-copy"></i> Copy</button>
+                    </div> -->
+                </div>
+            `;
+            chatBox.appendChild(aiMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            // Remove typing indicator
+            chatBox.removeChild(typingIndicator);
+            
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'message ai-message';
+            errorMessage.innerHTML = `
+                <div class="message-content">
+                    <div class="message-meta">
+                        <div class="message-avatar">AI</div>
+                        <span>Error</span>
+                    </div>
+                    Sorry, there was an error processing your request. Please try again.
+                </div>
+            `;
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+    
+    // Handle Enter key press
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+    
+    // Set initial active menu item
+    document.querySelector('.menu-item').classList.add('active');
+    
+    // Add click event to menu items
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            // In a real app, you would load different functionality based on the selected menu
+            const menuText = this.querySelector('.menu-text').textContent;
+            document.querySelector('.chat-title').textContent = `VasanthRizz AI ${menuText}`;
+        });
+    });
+    
+    // Clear chat button functionality
+    document.querySelector('.chat-action-btn').addEventListener('click', () => {
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML = `
+            <div class="welcome-message">
+                <h2>Hi, I'm VasanthRizz AI</h2>
+                
+                
+               <div class="welcome-actions d-flex justify-content-center gap-3 flex-nowrap">
+                    <button class="welcome-btn secondary">
+                        <i class="fas fa-lightbulb"></i>
+                       
+                    </button>
+                    <button class="welcome-btn secondary">
+                        <i class="fas fa-code"></i>
+                       
+                    </button>
+                    <button class="welcome-btn secondary">
+                        <i class="fas fa-chart-line"></i>
+                        
+                    </button>
+                  
+                </div>
+            </div>
+        `;
+        
+        // Reattach event listeners to welcome buttons
+        document.querySelectorAll('.welcome-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const text = this.querySelector('span').textContent;
+                document.getElementById('userInput').value = `Can you help me with ${text}?`;
+                sendMessage();
+            });
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>
+
