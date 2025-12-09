@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyCavF6FVL3LT2WTQ1bRAF88S3-4vmo7iqY';
+const API_KEY = 'AIzaSyA_Gewt7v7DLOxaEUKBBtWh5rR883AfQNg';
 const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 
@@ -21,4 +21,5 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'F12') {
         e.preventDefault();
     }
+
 });
