@@ -1,5 +1,5 @@
-const API_KEY = 'AIzaSyA_Gewt7v7DLOxaEUKBBtWh5rR883AfQNg';
-const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const API_KEY = 'AIzaSyAvFIb8CiiXtwXkrezxmprmxzZi1dJFYrw';
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 
 // Disable Right Click
@@ -23,4 +23,5 @@ document.addEventListener('keydown', function(e) {
     }
 
 });
+
 
